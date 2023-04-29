@@ -702,6 +702,8 @@ class Installer:
 				# if partition.encrypted:
 				if 'btrfs-progs' not in self.base_packages:
 					self.base_packages.append('btrfs-progs')
+				if 'f2fs' not in self.base_packages:
+					self.base_packages.append('f2fs-tools')
 			if partition.filesystem == 'xfs':
 				if 'xfs' not in self.base_packages:
 					self.base_packages.append('xfsprogs')

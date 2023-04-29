@@ -108,15 +108,28 @@ def suggest_single_disk_layout(block_device :BlockDevice,
 		# https://btrfs.wiki.kernel.org/index.php/FAQ
 		# https://unix.stackexchange.com/questions/246976/btrfs-subvolume-uuid-clash
 		# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
+		layout[block_device.path]['partitions'][1]['size'] = f"{round(block_device.size*0.2)}GiB"
 		layout[block_device.path]['partitions'][1]['btrfs'] = {
 			'subvolumes': [
 				Subvolume('@', '/'),
-				Subvolume('@home', '/home'),
 				Subvolume('@log', '/var/log'),
 				Subvolume('@pkg', '/var/cache/pacman/pkg'),
 				Subvolume('@.snapshots', '/.snapshots')
 			]
 		}
+		layout[block_device.path]['partitions'].append({
+			# Home
+			"type" : "primary",
+			"start" : f"{round(block_device.size*0.2)}GiB",
+			"size" : "100%",
+			"encrypted" : False,
+			"wipe" : True,
+			"mountpoint" : "/home",
+			"filesystem" : {
+				"format" : 'f2fs',
+				"mount_options" : []
+			}
+		})
 	elif using_home_partition:
 		# If we don't want to use subvolumes,
 		# But we want to be able to re-use data between re-installs..
